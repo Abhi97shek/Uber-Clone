@@ -1,12 +1,27 @@
-import React from 'react'
+import React,{useState} from 'react'
 import tw from "tailwind-styled-components";
 import Link from 'next/link';
 function Search() {
+
+    const [pickup,setPickup] = useState("");
+
+    const [dropoff,setDropoff] = useState("");
+
+    const pickupHandler=(e)=>{
+
+        setPickup(e.target.value);
+    
+    };
+
+    const dropoffHandler = (e)=>{
+
+        setDropoff(e.target.value);
+    };
+
     return (
         <Wrapper>
             <ButtonContainer>
                 <Link href="/">
-                 
                     <BackButton src="https://img.icons8.com/ios-filled/50/000000/left.png" />
                 </Link>
             </ButtonContainer>
@@ -17,8 +32,8 @@ function Search() {
                         <Square src="https://img.icons8.com/windows/50/000000/square-full.png" />
                 </FromToIcons>
                 <InputBoxes>
-                    <Input  placeholder="Enter pickup location"/>
-                    <Input placeholder="where to?" />
+                    <Input  placeholder="Enter pickup location" value={pickup} onChange={pickupHandler}/>
+                    <Input placeholder="where to?" value={dropoff} onChange={dropoffHandler}/>
                 </InputBoxes>
                 <PlusIcon src="https://img.icons8.com/ios/50/000000/plus-math.png" />
             </InputContainer>
@@ -26,7 +41,14 @@ function Search() {
                 <StarIcon src="https://img.icons8.com/ios-filled/50/ffffff/star--v1.png"/>
                 Saved Places
             </SavedPlaces>
+            <Link href={{
+                pathname:"/confirm",
+                 query:
+                 { pickLocation:pickup,
+                    dropLocation: dropoff
+                 }}}>
             <ConfirmButton>Confirm Locations</ConfirmButton>
+            </Link>
         </Wrapper>
     )
 }
@@ -132,5 +154,6 @@ const ConfirmButton = tw.div`
     text-white
     m-3
     text-center
-    text-lg
+    text-xl
+    cursor-pointer
 `;

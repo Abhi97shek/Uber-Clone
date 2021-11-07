@@ -1,8 +1,34 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import { useEffect,useState } from 'react';
+import { onAuthStateChanged,signOut } from '@firebase/auth';
+import { auth } from '../firebase';
+import router, { useRouter } from 'next/router';
 import tw from "tailwind-styled-components";
 import Map from '../components/Map';
 import Link from 'next/link';
 export default function Home() {
+
+  const [user,setUser] = useState(null);
+  
+  useEffect(()=>{
+
+
+    return onAuthStateChanged(auth,user=>{
+      if(user){
+        setUser({
+          name:user.displayName,
+          photoUrl:user.photoURL
+        })
+      }
+      else
+      {
+        setUser(null);
+        router.push('/login');
+      }
+    });
+  },[]);
+
+
   return (
         <Wrapper>
           <Head>
@@ -14,8 +40,8 @@ export default function Home() {
             <Header>
               <UberLogo src="https://i.ibb.co/84stgjq/uber-technologies-new-20218114.jpg" />
               <Profile>
-                <Name>Abhishek</Name>
-                <UserImage src="https://lh3.googleusercontent.com/a-/AOh14GjTwGo_KZBZ-zO9k4mkXjqeH8gxocmK9HO78BUYDQ=s288-p-rw-no" /> 
+                <Name>{user && user.name}</Name>
+                <UserImage src={user && user.photoUrl} onClick={()=>signOut(auth)}/> 
               </Profile> 
             </Header>
             <ActionButtons>
@@ -25,7 +51,7 @@ export default function Home() {
                       Ride
                  </ActionButton>
               </Link>   
-                 <ActionButton >
+                 <ActionButton>
                  <ActionButtonImage src="https://i.ibb.co/n776JLm/bike.png"/>
                     Wheel
                   </ActionButton>
@@ -78,6 +104,7 @@ const Profile =tw.div`
 
 const Name = tw.div`
   mr-4 w-20 text-sm
+  font-medium
 `;
 
 const UserImage =tw.img`
@@ -86,6 +113,7 @@ const UserImage =tw.img`
     rounded-full
     border-red-200
     p-px
+    cursor-pointer
 `;
 
 const ActionButtons = tw.div`
@@ -106,6 +134,8 @@ bg-gray-200
   rounded-lg
   tranform hover:scale-105 transition text-xl
   cursor-pointer
+  md:m-2.5
+  lg:m-2.5
  
 `;
 
